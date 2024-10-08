@@ -12,7 +12,7 @@ public class ARPlaneSelector : MonoBehaviour
     [SerializeField] Material focusedPlaneMaterial;
     [SerializeField] Material defaultPlaneMaterial;
     
-    public event UnityAction<ARPlane> OnPlaneSelected;
+    public UnityEvent<ARPlane> OnPlaneSelected;
     public ARPlane SelectedPlane { get; private set; } = null; // 선택이 확정된 ARPlane
 
     private InputAction clickAction;
@@ -26,17 +26,8 @@ public class ARPlaneSelector : MonoBehaviour
         pointAction = playerInput.actions["Point"];
         arPlaneMask = LayerMask.GetMask("AR Plane");
 
-        // TestCode
-        {
-            EnterSelectMode();
-            planeManager.planesChanged += args =>
-            {
-                foreach (ARPlane plane in args.added)
-                {
-                    Debug.Log($"AR Plane 추가됨, Name:{plane.gameObject.name}, Position:{plane.transform.position}, Layer:{LayerMask.LayerToName(plane.gameObject.layer)}");
-                }
-            };
-        }
+        // 테스트 코드
+        EnterSelectMode();
     }
 
     public void EnterSelectMode()
@@ -45,7 +36,13 @@ public class ARPlaneSelector : MonoBehaviour
         clickAction.started += OnClick;
     }
 
-    public void ExitSelectMode()
+    public void CancelSelectMode()
+    {
+        planeManager.enabled = false;
+        clickAction.started -= OnClick;
+    }
+
+    private void CompleteSelectMode()
     {
         // 다른 AR Plane 정리 및 planeManager 정지
         foreach(ARPlane plane in planeManager.trackables)
@@ -64,9 +61,6 @@ public class ARPlaneSelector : MonoBehaviour
     {
         Ray clickRay = Camera.main.ScreenPointToRay(pointAction.ReadValue<Vector2>());
 
-        Debug.Log($"Camera Position: {Camera.main.transform.position}");
-        Debug.Log($"clickRayUnityWorld: {clickRay}");
-
         ARPlane clicked = null;
         
         // 화면에 보이는 ARPlane을 선택해야하므로 ARRaycast 대신 Physics.Raycast 사용
@@ -74,7 +68,6 @@ public class ARPlaneSelector : MonoBehaviour
         {
             clicked = hitInfo.collider.GetComponent<ARPlane>();
         }
-        Debug.Log($"클릭됨: {(clicked != null ? clicked.name : "null")}");
         ClickPlane(clicked);
     }
 
@@ -84,8 +77,8 @@ public class ARPlaneSelector : MonoBehaviour
         if (clicked != null && clicked == focusedPlane)
         {
             SelectedPlane = clicked;
-            Debug.Log("선택 완료됨");
-            ExitSelectMode();
+            Debug.Log($"[ARPlaneSelector] 선택 완료됨: {clicked.gameObject.name}");
+            CompleteSelectMode();
             return;
         }
 
@@ -99,7 +92,7 @@ public class ARPlaneSelector : MonoBehaviour
         if (focusedPlane != null)
         {
             focusedPlane.GetComponent<Renderer>().material = focusedPlaneMaterial;
-            Debug.Log("임시 선택됨");
+            Debug.Log($"[ARPlaneSelector] 임시 선택됨: {clicked.gameObject.name}");
         }
     }
 }
