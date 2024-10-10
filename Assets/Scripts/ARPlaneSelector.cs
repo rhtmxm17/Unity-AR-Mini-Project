@@ -45,12 +45,10 @@ public class ARPlaneSelector : MonoBehaviour
     private void CompleteSelectMode()
     {
         // 다른 AR Plane 정리 및 planeManager 정지
-        foreach(ARPlane plane in planeManager.trackables)
-        {
-            if (plane != SelectedPlane)
-                Destroy(plane.gameObject);
-        }
         planeManager.enabled = false;
+        planeManager.SetTrackablesActive(false);
+        SelectedPlane.gameObject.SetActive(true);
+
         Debug.Log($"선택 완료시 planeManager.trackables.count:{planeManager.trackables.count}");
 
         clickAction.started -= OnClick;

@@ -2,15 +2,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.ARFoundation;
 
+[RequireComponent(typeof(LineRenderer))]
 public class BoardRectSelector : MonoBehaviour
 {
     [SerializeField] PlayerInput playerInput;
     [SerializeField] GameObject beaconPrefab; // 평면 위에 선택한 지점을 보여줄 프리펩
+    [SerializeField, Tooltip("원본 사이즈 10*10")] GameObject boardPrefab; // 선택이 완료되었을 때 생성할 보드 프리펩
 
-    enum Phase { First, Second, Last, COUNT }
+    public UnityEvent<GameObject> OnBoardCreated;
+
+    private LineRenderer lineRenderer;
+
+    private enum Phase { First, Second, Last, COUNT }
 
     private Phase phase;
     private InputAction clickAction;
@@ -22,6 +29,8 @@ public class BoardRectSelector : MonoBehaviour
 
     private void Awake()
     {
+        lineRenderer = GetComponent<LineRenderer>();
+
         updateBeacons[(int)Phase.First] = UpdateBeacon_FirstPhase;
         updateBeacons[(int)Phase.Second] = UpdateBeacon_SecondPhase;
         updateBeacons[(int)Phase.Last] = UpdateBeacon_LastPhase;
@@ -29,6 +38,8 @@ public class BoardRectSelector : MonoBehaviour
 
     private void Start()
     {
+        lineRenderer.positionCount = 0;
+
         clickAction = playerInput.actions["Click"];
         pointAction = playerInput.actions["Point"];
     }
@@ -71,6 +82,10 @@ public class BoardRectSelector : MonoBehaviour
             beacons[(int)phase].transform.up = basePlane.normal; // 평면의 법선 방향이 위가 되도록 조정
 
             pointAction.performed += updateBeacons[(int)phase];
+
+            lineRenderer.positionCount = 1 + (int)phase;
+            if (phase == Phase.Last)
+                lineRenderer.positionCount = 4;
         }
     }
 
@@ -80,6 +95,7 @@ public class BoardRectSelector : MonoBehaviour
         if (TryGetCursorPoint(out Vector3 postion))
         {
             beacons[(int)phase].transform.position = postion;
+            lineRenderer.SetPosition(0, postion);
         }
     }
 
@@ -99,7 +115,7 @@ public class BoardRectSelector : MonoBehaviour
             currentBeacon.transform.rotation = Quaternion.LookRotation(lookDir, basePlane.normal);
             lastBeacon.transform.rotation = Quaternion.LookRotation(lookDir, basePlane.normal);
 
-            // 이곳에 두 비콘을 잇는 선 그리기 추가
+            lineRenderer.SetPosition(1, postion);
         }
     }
 
@@ -110,7 +126,14 @@ public class BoardRectSelector : MonoBehaviour
             GameObject currentBeacon = beacons[(int)phase];
             currentBeacon.transform.position = postion;
 
-            // 이곳에 두 비콘을 꼭짓점으로 하고 세번째 비콘을 지나는 직사각형 선 그리기 추가
+            Vector3 pointA = lineRenderer.GetPosition(0);
+            Vector3 pointB = lineRenderer.GetPosition(1);
+            Vector3 vectorAB = pointB - pointA; // 밑변
+            Vector3 pointH = pointA + vectorAB / Vector3.Dot(vectorAB, vectorAB) * Vector3.Dot(vectorAB, postion - pointA); // 수선의 발
+            Vector3 vectorHC = postion - pointH; // 밑변->클릭지점 벡터
+
+            lineRenderer.SetPosition(2, pointB + vectorHC);
+            lineRenderer.SetPosition(3, pointA + vectorHC);
         }
     }
 
@@ -130,12 +153,26 @@ public class BoardRectSelector : MonoBehaviour
 
         if (Phase.COUNT == phase)
         {
-            // 테스트 코드
-            {
-                clickAction.started -= CreateBeacon;
-                clickAction.canceled -= PutBeacon;
-                Debug.Log("생성 완료 단계");
-            }
+            clickAction.started -= CreateBeacon;
+            clickAction.canceled -= PutBeacon;
+
+            // 보드 사이즈 계산
+            Vector3[] vertexes = new Vector3[4];
+            lineRenderer.GetPositions(vertexes);
+
+            Vector3 center = (vertexes[0] + vertexes[2]) * 0.5f;
+            float length = (vertexes[1] - vertexes[0]).magnitude;
+            float height = (vertexes[3] - vertexes[0]).magnitude;
+
+            GameObject board = Instantiate(boardPrefab, center, beacons[0].transform.rotation);
+            board.transform.localScale = new Vector3(height * 0.1f, 1f, length * 0.1f);
+
+            //// 자유 도형으로 한다면 Mesh 생성이 필요할듯
+            //Mesh boardMesh = new();
+            //boardMesh.SetVertices(vertexes);
+            //boardMesh.SetTriangles(new int[6] { 0, 1, 2, 0, 2, 3 }, 0);
+
+            OnBoardCreated?.Invoke(board);
         }
     }
 }
