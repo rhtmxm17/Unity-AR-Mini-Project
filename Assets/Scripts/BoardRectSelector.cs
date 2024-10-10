@@ -11,9 +11,9 @@ public class BoardRectSelector : MonoBehaviour
 {
     [SerializeField] PlayerInput playerInput;
     [SerializeField] GameObject beaconPrefab; // 평면 위에 선택한 지점을 보여줄 프리펩
-    [SerializeField, Tooltip("원본 사이즈 10*10")] GameObject boardPrefab; // 선택이 완료되었을 때 생성할 보드 프리펩
+    [SerializeField, Tooltip("원본 사이즈 10*10")] Collider boardPrefab; // 선택이 완료되었을 때 생성할 보드 프리펩
 
-    public UnityEvent<GameObject> OnBoardCreated;
+    public UnityEvent<Collider> OnBoardCreated;
 
     private LineRenderer lineRenderer;
 
@@ -164,13 +164,15 @@ public class BoardRectSelector : MonoBehaviour
             float length = (vertexes[1] - vertexes[0]).magnitude;
             float height = (vertexes[3] - vertexes[0]).magnitude;
 
-            GameObject board = Instantiate(boardPrefab, center, beacons[0].transform.rotation);
+            Collider board = Instantiate(boardPrefab, center, beacons[0].transform.rotation);
             board.transform.localScale = new Vector3(height * 0.1f, 1f, length * 0.1f);
 
-            //// 자유 도형으로 한다면 Mesh 생성이 필요할듯
-            //Mesh boardMesh = new();
-            //boardMesh.SetVertices(vertexes);
-            //boardMesh.SetTriangles(new int[6] { 0, 1, 2, 0, 2, 3 }, 0);
+            // 비콘 정리
+            foreach (GameObject beacon in beacons)
+            {
+                // 평면 재설정 기능에 사용할 계획이 있으므로 삭제 대신 비활성화
+                beacon.gameObject.SetActive(false);
+            }
 
             OnBoardCreated?.Invoke(board);
         }
