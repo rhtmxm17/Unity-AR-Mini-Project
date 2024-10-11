@@ -11,6 +11,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tracked Image Center
       objectReference: {fileID: 0}
+    - target: {fileID: 3279147489192363411, guid: a28ffe0c98167674d9f64d83a6d8a641, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d0d63cc37060c184d940c817f60ac85f, type: 2}
+    - target: {fileID: 5743068275750944236, guid: a28ffe0c98167674d9f64d83a6d8a641, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1e293ad666ced0b40b38717346bb6204, type: 2}
+    - target: {fileID: 8776214378002083989, guid: a28ffe0c98167674d9f64d83a6d8a641, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 381397bb8b946e14cba093774a488219, type: 2}
     - target: {fileID: 9197004208211985264, guid: a28ffe0c98167674d9f64d83a6d8a641, type: 3}
       propertyPath: m_RootOrder
       value: 0

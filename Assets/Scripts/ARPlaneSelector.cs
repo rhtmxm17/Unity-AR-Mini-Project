@@ -25,9 +25,6 @@ public class ARPlaneSelector : MonoBehaviour
         clickAction = playerInput.actions["Click"];
         pointAction = playerInput.actions["Point"];
         arPlaneMask = LayerMask.GetMask("AR Plane");
-
-        // 테스트 코드
-        EnterSelectMode();
     }
 
     public void EnterSelectMode()
