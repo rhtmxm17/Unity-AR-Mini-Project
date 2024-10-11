@@ -201,6 +201,7 @@ MonoBehaviour:
   planeSelector: {fileID: 2052741727}
   boardRectSelector: {fileID: 2052741729}
   boardManager: {fileID: 109200255}
+  unitDatatable: {fileID: 11400000, guid: ea2df77366708af4684184f9c6ccd4d6, type: 2}
 --- !u!4 &119090943
 Transform:
   m_ObjectHideFlags: 0
@@ -378,7 +379,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stage: 1
-  renderingStrategy: 0
+  renderingStrategy: 1
   renderingMode: 0
   outlineLayerMask: -1
   primaryBufferSizeMode: 0
@@ -386,7 +387,7 @@ MonoBehaviour:
   primarySizeReference: 800
   blurShift: 1
   dilateShift: 1
-  dilateIterations: 1
+  dilateIterations: 2
   dilateQuality: 0
   blurIterations: 1
   blurType: 1

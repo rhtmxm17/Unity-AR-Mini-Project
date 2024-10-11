@@ -46,6 +46,8 @@ public class BoardRectSelector : MonoBehaviour
 
     public void EnterSelectMode(ARPlane targetPlane)
     {
+        lineRenderer.enabled = true;
+        lineRenderer.positionCount = 0;
         basePlane = targetPlane.infinitePlane;
 
         phase = Phase.First;
@@ -153,6 +155,7 @@ public class BoardRectSelector : MonoBehaviour
 
         if (Phase.COUNT == phase)
         {
+            lineRenderer.enabled = false;
             clickAction.started -= CreateBeacon;
             clickAction.canceled -= PutBeacon;
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class ARSceneManager : MonoBehaviour
     [SerializeField] ARPlaneSelector planeSelector;
     [SerializeField] BoardRectSelector boardRectSelector;
     [SerializeField] BoardManager boardManager;
+
+    [SerializeField] UnitDatatable unitDatatable;
 
     public bool ActiveOcclusion
     {
@@ -34,10 +37,11 @@ public class ARSceneManager : MonoBehaviour
         boardRectSelector.OnBoardCreated.AddListener(boardManager.SetBoard);
         boardRectSelector.OnBoardCreated.AddListener(_ => { ActiveOcclusion = false; });
 
+        unitDatatable.Initialize();
+
         StartCoroutine(StartScene());
 
-        // 로그 출력용
-        trackedImageManager.trackedImagesChanged += RegistCheckTarget;
+        trackedImageManager.trackedImagesChanged += SetBoardToImageUnit;
     }
 
     private IEnumerator StartScene()
@@ -47,26 +51,12 @@ public class ARSceneManager : MonoBehaviour
         planeSelector.EnterSelectMode();
     }
 
-    private void RegistCheckTarget(ARTrackedImagesChangedEventArgs args)
+    private void SetBoardToImageUnit(ARTrackedImagesChangedEventArgs args)
     {
         foreach (var image in args.added)
         {
-            Debug.Log($"이미지:{image.referenceImage.name} 감지됨");
-            StartCoroutine(CheckImageIsOnBoardRoop(image));
+            Debug.Log($"[ARSceneManager]이미지:{image.referenceImage.name} 감지됨");
+            image.GetComponent<TrackedImageUnit>().SetBoardManger(boardManager);
         }
     }
-
-    private IEnumerator CheckImageIsOnBoardRoop(ARTrackedImage image)
-    {
-        YieldInstruction period = new WaitForSeconds(3f);
-        while (true)
-        {
-            if (image.trackingState == UnityEngine.XR.ARSubsystems.TrackingState.Tracking)
-            {
-                Debug.Log($"이미지:{image.referenceImage.name} | 보드위:{boardManager.ImageIsOnBoard(image)}");
-            }
-            yield return period;
-        }
-    }
-
 }
