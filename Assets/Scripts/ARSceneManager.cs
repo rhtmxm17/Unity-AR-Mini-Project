@@ -61,8 +61,10 @@ public class ARSceneManager : MonoBehaviour
         YieldInstruction period = new WaitForSeconds(3f);
         while (true)
         {
-            Debug.Log($"이미지:{image.referenceImage.name} | 추적상태:{image.trackingState} | 보드위:{boardManager.ImageIsOnBoard(image)}");
-            Debug.Log($"extents:{image.extents} | size:{image.size}");
+            if (image.trackingState == UnityEngine.XR.ARSubsystems.TrackingState.Tracking)
+            {
+                Debug.Log($"이미지:{image.referenceImage.name} | 보드위:{boardManager.ImageIsOnBoard(image)}");
+            }
             yield return period;
         }
     }

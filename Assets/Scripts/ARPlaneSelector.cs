@@ -45,8 +45,6 @@ public class ARPlaneSelector : MonoBehaviour
         planeManager.enabled = false;
         planeManager.SetTrackablesActive(false);
 
-        Debug.Log($"선택 완료시 planeManager.trackables.count:{planeManager.trackables.count}");
-
         clickAction.started -= OnClick;
         OnPlaneSelected?.Invoke(SelectedPlane);
     }
