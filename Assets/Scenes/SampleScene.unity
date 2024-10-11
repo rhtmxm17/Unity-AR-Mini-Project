@@ -122,51 +122,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &109200254
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 109200256}
-  - component: {fileID: 109200255}
-  m_Layer: 0
-  m_Name: Board Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &109200255
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 109200254}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b6f3e423866cf34d92d4b3c1ebd4ea8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxDistance: 0.1
---- !u!4 &109200256
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 109200254}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &119090941
 GameObject:
   m_ObjectHideFlags: 0
@@ -200,7 +155,7 @@ MonoBehaviour:
   occlusionManager: {fileID: 678064264}
   planeSelector: {fileID: 2052741727}
   boardRectSelector: {fileID: 2052741729}
-  boardManager: {fileID: 109200255}
+  boardManager: {fileID: 2052741731}
   unitDatatable: {fileID: 11400000, guid: ea2df77366708af4684184f9c6ccd4d6, type: 2}
 --- !u!4 &119090943
 Transform:
@@ -215,7 +170,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &678064257
 GameObject:
@@ -696,8 +651,10 @@ GameObject:
   - component: {fileID: 2052741727}
   - component: {fileID: 2052741729}
   - component: {fileID: 2052741730}
+  - component: {fileID: 2052741731}
+  - component: {fileID: 2052741732}
   m_Layer: 0
-  m_Name: Board Selector
+  m_Name: Board Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -854,3 +811,33 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 1
+--- !u!114 &2052741731
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052741726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b6f3e423866cf34d92d4b3c1ebd4ea8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxDistance: 0.1
+  boardModifyer: {fileID: 2052741732}
+--- !u!114 &2052741732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052741726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af23084a0ec0ca54db6d19ca75ca4b2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInput: {fileID: 882121983}
+  axisXprefab: {fileID: 35981617406033027, guid: 7baffe2dcfece394f9926e41cb992b4c, type: 3}
+  axisYprefab: {fileID: 1747964226820637564, guid: 54144f0ae68954548a888e959ee5378e, type: 3}
+  axisZprefab: {fileID: 2576984508191694887, guid: 5706911b1e1cefc479374e7ec4ce0a35, type: 3}

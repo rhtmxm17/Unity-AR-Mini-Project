@@ -9,7 +9,16 @@ public class BoardManager : MonoBehaviour
 
     private Collider board;
 
-    public void SetBoard(Collider board) => this.board = board;
+    // for testcode
+    [SerializeField] BoardModifyer boardModifyer;
+
+    public void SetBoard(Collider board)
+    {
+        this.board = board;
+
+        // test code
+        boardModifyer.EnterModifyMode(board.gameObject);
+    }
 
     public bool ImageIsOnBoard(ARTrackedImage image)
     {

@@ -22,8 +22,9 @@ public class BoardRectSelector : MonoBehaviour
     private Phase phase;
     private InputAction clickAction;
     private InputAction pointAction;
-    private GameObject[] beacons = new GameObject[(int)Phase.COUNT]; // 선택한 지점을 표시할 비콘
-    private Action<InputAction.CallbackContext>[] updateBeacons = new Action<InputAction.CallbackContext>[(int)Phase.COUNT]; // 드래그하는 동안 실행할 메서드
+    private Collider boardInstance;
+    private readonly GameObject[] beacons = new GameObject[(int)Phase.COUNT]; // 선택한 지점을 표시할 비콘
+    private readonly Action<InputAction.CallbackContext>[] updateBeacons = new Action<InputAction.CallbackContext>[(int)Phase.COUNT]; // 드래그하는 동안 실행할 메서드
     private Plane basePlane;
     private bool holdingBeacon = false;
 
@@ -167,8 +168,8 @@ public class BoardRectSelector : MonoBehaviour
             float length = (vertexes[1] - vertexes[0]).magnitude;
             float height = (vertexes[3] - vertexes[0]).magnitude;
 
-            Collider board = Instantiate(boardPrefab, center, beacons[0].transform.rotation);
-            board.transform.localScale = new Vector3(height * 0.1f, 1f, length * 0.1f);
+            boardInstance = Instantiate(boardPrefab, center, beacons[0].transform.rotation);
+            boardInstance.transform.localScale = new Vector3(height * 0.1f, 1f, length * 0.1f);
 
             // 비콘 정리
             foreach (GameObject beacon in beacons)
@@ -177,7 +178,7 @@ public class BoardRectSelector : MonoBehaviour
                 beacon.gameObject.SetActive(false);
             }
 
-            OnBoardCreated?.Invoke(board);
+            OnBoardCreated?.Invoke(boardInstance);
         }
     }
 }
