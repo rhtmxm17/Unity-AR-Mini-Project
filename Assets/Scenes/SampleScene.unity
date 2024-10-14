@@ -155,7 +155,7 @@ MonoBehaviour:
   occlusionManager: {fileID: 678064264}
   planeSelector: {fileID: 2052741727}
   boardRectSelector: {fileID: 2052741729}
-  boardPolygoSelector: {fileID: 2052741733}
+  boardPolygonSelector: {fileID: 2052741733}
   boardModifyer: {fileID: 2052741732}
   editButton: {fileID: 303226087}
   unitDatatable: {fileID: 11400000, guid: ea2df77366708af4684184f9c6ccd4d6, type: 2}

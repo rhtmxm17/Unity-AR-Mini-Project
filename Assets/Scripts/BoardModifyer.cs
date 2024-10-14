@@ -71,9 +71,12 @@ public class BoardModifyer : MonoBehaviour
 
         foreach (var beacon in beacons)
         {
+            // 보드가 다각형 모드일 경우 높이 편집만 허용
+            if (beacon.Id != (int)Beacons.UpDown && board.meshMode == ARBoard.MeshMode.Polygon)
+                continue;
+
             beacon.gameObject.SetActive(true);
-            beacon.transform.rotation = board.transform.rotation;
-            beacon.transform.position = board.transform.TransformPoint(beaconPositions[beacon.Id]);
+            beacon.transform.SetPositionAndRotation(board.transform.TransformPoint(beaconPositions[beacon.Id]), board.transform.rotation);
             Debug.Log($"{beacon.Id}번 비콘 위치: {beacon.transform.position}");
         }
 

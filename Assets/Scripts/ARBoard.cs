@@ -8,6 +8,9 @@ public class ARBoard : MonoBehaviour
 {
     [SerializeField] float maxDistance = 0.1f;
 
+    public enum MeshMode { Plane, Polygon };
+    public MeshMode meshMode { get; set; } = MeshMode.Plane;
+
     private Collider boardCollider;
 
     private void Awake()

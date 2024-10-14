@@ -46,6 +46,7 @@ public class BoardPolygonSelector : MonoBehaviour
     public void EnterSelectMode(ARPlane targetPlane)
     {
         lineRenderer.enabled = true;
+        lineRenderer.loop = false;
         lineRenderer.positionCount = 0;
         basePlane = targetPlane.infinitePlane;
         currentBeaconIndex = 0;
@@ -113,6 +114,19 @@ public class BoardPolygonSelector : MonoBehaviour
 
             }
             lineRenderer.SetPosition(currentBeaconIndex, postion);
+
+            // 기존 비콘과 너무 가까우면 숨기기
+            bool enable = true;
+            for (int i = 0; i < currentBeaconIndex; i++)
+            {
+                // 비콘 간격이 0.1m 이상인지 검사
+                if (0.01f >= (beacons[currentBeaconIndex].transform.position - beacons[i].transform.position).sqrMagnitude)
+                {
+                    enable = false;
+                    break;
+                }
+            }
+            currentBeacon.SetActive(enable);
         }
     }
 
@@ -162,11 +176,14 @@ public class BoardPolygonSelector : MonoBehaviour
 
     private void BuildBoardMesh()
     {
+        // 1. 비콘으로 결정된 다각형을 삼각 분할한 뒤
+        // 2. 그 정보를 기반으로 Mesh 생성
+
         int index = 0;
         LinkedList<BeaconInfo> beaconList = new LinkedList<BeaconInfo>
         (
             beacons.GetRange(0, currentBeaconIndex) // 현재 비콘 번호 (==점 개수)까지 사용
-                .ConvertAll(beacon => 
+                .ConvertAll<BeaconInfo>(beacon => 
                 {
                     return new BeaconInfo() // 번호와 위치를 저장
                     {
@@ -175,7 +192,7 @@ public class BoardPolygonSelector : MonoBehaviour
                     };
                 })
         );
-        List<int[]> triangleList = new(beaconList.Count - 2);
+        List<int> triangleList = new((beaconList.Count - 2) * 3); // 폴리곤의 삼각형 목록
 
         LinkedListNode<BeaconInfo> nodeA = beaconList.First;
         LinkedListNode<BeaconInfo> nodeB = nodeA.Next;
@@ -209,7 +226,9 @@ public class BoardPolygonSelector : MonoBehaviour
             {
                 Debug.Log($"삼각형 등록:{nodeA.Value.index}, {nodeB.Value.index}, {nodeC.Value.index}");
                 // 검사 통과시 삼각형 목록에 등록
-                triangleList.Add(new int[] { nodeA.Value.index, nodeB.Value.index, nodeC.Value.index });
+                triangleList.Add(nodeA.Value.index);
+                triangleList.Add(nodeB.Value.index);
+                triangleList.Add(nodeC.Value.index);
 
                 // 사이의 점을 목록에서 제거해서 해당 삼각형을 작업 목록에서 제외한 뒤 속행
                 beaconList.Remove(nodeB);
@@ -226,6 +245,22 @@ public class BoardPolygonSelector : MonoBehaviour
                 nodeC = (nodeC.Next ?? beaconList.First);
             }
         }
+
+        Vector3 center = Vector3.zero; // 편집시 기준이 될 중심 위치
+        for (int i = 0; i < currentBeaconIndex; i++)
+        {
+            center += beacons[i].transform.position;
+        }
+        center /= currentBeaconIndex;
+
+        Mesh mesh = new Mesh();
+        mesh.vertices = beacons.GetRange(0, currentBeaconIndex).ConvertAll<Vector3>(beacon => beacon.transform.position - center).ToArray();
+        mesh.triangles = triangleList.ToArray();
+
+        boardInstance = Instantiate(boardPrefab, center, Quaternion.identity);
+        boardInstance.meshMode = ARBoard.MeshMode.Polygon;
+        boardInstance.GetComponent<MeshFilter>().mesh = mesh;
+        boardInstance.GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
     private static bool ClockwiseTriangle(Vector3 triA, Vector3 triB, Vector3 triC)

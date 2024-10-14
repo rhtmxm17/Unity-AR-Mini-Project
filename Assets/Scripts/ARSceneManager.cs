@@ -11,7 +11,7 @@ public class ARSceneManager : MonoBehaviour
     [SerializeField] AROcclusionManager occlusionManager;
     [SerializeField] ARPlaneSelector planeSelector;
     [SerializeField] BoardRectSelector boardRectSelector;
-    [SerializeField] BoardPolygonSelector boardPolygoSelector;
+    [SerializeField] BoardPolygonSelector boardPolygonSelector;
     [SerializeField] BoardModifyer boardModifyer;
     [SerializeField] Button editButton;
 
@@ -34,7 +34,21 @@ public class ARSceneManager : MonoBehaviour
         trackedImageManager = sessionOrigin.GetComponent<ARTrackedImageManager>();
 
         // testcode
-        planeSelector.OnPlaneSelected.AddListener(boardPolygoSelector.EnterSelectMode);
+        planeSelector.OnPlaneSelected.AddListener(boardPolygonSelector.EnterSelectMode);
+
+        boardPolygonSelector.OnBoardCreated.AddListener(board =>
+        {
+            this.board = board;
+            ActiveOcclusion = false;
+            editButton.gameObject.SetActive(true);
+            editButton.onClick.AddListener(EnterModifyMode);
+
+            // 보드보다 먼저 확인된 이미지가 있다면 보드 등록
+            foreach (var image in trackedImageManager.trackables)
+            {
+                image.GetComponent<TrackedImageUnit>().SetBoard(board);
+            }
+        });
 
         if (false)
         {

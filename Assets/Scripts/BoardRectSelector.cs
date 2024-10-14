@@ -54,6 +54,7 @@ public class BoardRectSelector : MonoBehaviour
     public void EnterSelectMode(ARPlane targetPlane)
     {
         lineRenderer.enabled = true;
+        lineRenderer.loop = true;
         lineRenderer.positionCount = 0;
         basePlane = targetPlane.infinitePlane;
 
