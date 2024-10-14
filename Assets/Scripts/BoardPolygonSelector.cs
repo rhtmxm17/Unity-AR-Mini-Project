@@ -205,6 +205,11 @@ public class BoardPolygonSelector : MonoBehaviour
             while (! ClockwiseTriangle(nodeA.Value.position, nodeB.Value.position, nodeC.Value.position))
             {
                 Debug.Log($"반시계:{nodeA.Value.index}, {nodeB.Value.index}, {nodeC.Value.index}");
+                if (beaconList.Count == 3)
+                {
+                    Debug.Log("알고리즘 논리 오류");
+                    return;
+                }
                 // 시계방향이 아니라면 다음 삼각형
                 nodeA = nodeB;
                 nodeB = nodeC;
@@ -277,7 +282,7 @@ public class BoardPolygonSelector : MonoBehaviour
 
         if (0f >= Vector3.Cross(triB - triA, pos - triA).y)
             return false;
-        if (0f >= Vector3.Cross(triA - triB, pos - triB).y)
+        if (0f >= Vector3.Cross(triC - triB, pos - triB).y)
             return false;
         if (0f >= Vector3.Cross(triA - triC, pos - triC).y)
             return false;
