@@ -158,6 +158,7 @@ MonoBehaviour:
   boardPolygonSelector: {fileID: 2052741733}
   boardModifyer: {fileID: 2052741732}
   editButton: {fileID: 303226087}
+  buttonTextMesh: {fileID: 262422989}
   unitDatatable: {fileID: 11400000, guid: ea2df77366708af4684184f9c6ccd4d6, type: 2}
 --- !u!4 &119090943
 Transform:
@@ -232,7 +233,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Edit
+  m_text: 'Rect
 
     Mode'
   m_isRightToLeft: 0
@@ -329,7 +330,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &303226086
 RectTransform:
   m_ObjectHideFlags: 0

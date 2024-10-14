@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
@@ -14,9 +15,11 @@ public class ARSceneManager : MonoBehaviour
     [SerializeField] BoardPolygonSelector boardPolygonSelector;
     [SerializeField] BoardModifyer boardModifyer;
     [SerializeField] Button editButton;
+    [SerializeField] TMP_Text buttonTextMesh;
 
     [SerializeField] UnitDatatable unitDatatable;
 
+    private bool polygonMode = false;
     private ARBoard board = null;
     private ARPlaneManager planeManager;
     private ARTrackedImageManager trackedImageManager;
@@ -33,49 +36,70 @@ public class ARSceneManager : MonoBehaviour
         planeManager = sessionOrigin.GetComponent<ARPlaneManager>();
         trackedImageManager = sessionOrigin.GetComponent<ARTrackedImageManager>();
 
-        // testcode
-        planeSelector.OnPlaneSelected.AddListener(boardPolygonSelector.EnterSelectMode);
+        editButton.onClick.AddListener(SwitchBoardMode);
 
+        // 감지된 평면중 하나를 선택 완료시 스위치 비활성화 및 보드 영역 선택 진입
+        // 디폴트: rectMode
+        planeSelector.OnPlaneSelected.AddListener(_ =>
+        {
+            editButton.onClick.RemoveListener(SwitchBoardMode);
+            editButton.gameObject.SetActive(false);
+        });
+        planeSelector.OnPlaneSelected.AddListener(boardRectSelector.EnterSelectMode);
+
+        // 보드 영역 선택 완료시 처리
         boardPolygonSelector.OnBoardCreated.AddListener(board =>
         {
             this.board = board;
             ActiveOcclusion = false;
             editButton.gameObject.SetActive(true);
             editButton.onClick.AddListener(EnterModifyMode);
+            buttonTextMesh.text = "Edit";
 
             // 보드보다 먼저 확인된 이미지가 있다면 보드 등록
             foreach (var image in trackedImageManager.trackables)
             {
                 image.GetComponent<TrackedImageUnit>().SetBoard(board);
             }
-        });
+        }); // 다각형 모드
 
-        if (false)
+        boardRectSelector.OnBoardCreated.AddListener(board =>
         {
-            // 감지된 평면중 하나를 선택 완료시 보드 영역 선택 진입
-            planeSelector.OnPlaneSelected.AddListener(boardRectSelector.EnterSelectMode);
+            this.board = board;
+            ActiveOcclusion = false;
+            editButton.gameObject.SetActive(true);
+            editButton.onClick.AddListener(EnterModifyMode);
+            buttonTextMesh.text = "Edit";
 
-            // 보드 영역 선택 완료시 처리
-            boardRectSelector.OnBoardCreated.AddListener(board =>
+            // 보드보다 먼저 확인된 이미지가 있다면 보드 등록
+            foreach (var image in trackedImageManager.trackables)
             {
-                this.board = board;
-                ActiveOcclusion = false;
-                editButton.gameObject.SetActive(true);
-                editButton.onClick.AddListener(EnterModifyMode);
-
-                // 보드보다 먼저 확인된 이미지가 있다면 보드 등록
-                foreach (var image in trackedImageManager.trackables)
-                {
-                    image.GetComponent<TrackedImageUnit>().SetBoard(board);
-                }
-            });
-        }
+                image.GetComponent<TrackedImageUnit>().SetBoard(board);
+            }
+        }); // 사각형 모드
 
         unitDatatable.Initialize();
 
         StartCoroutine(StartScene());
 
         trackedImageManager.trackedImagesChanged += SetBoardToImageUnit;
+    }
+
+    private void SwitchBoardMode()
+    {
+        polygonMode = !polygonMode;
+        if (polygonMode)
+        {
+            planeSelector.OnPlaneSelected.RemoveListener(boardRectSelector.EnterSelectMode);
+            planeSelector.OnPlaneSelected.AddListener(boardPolygonSelector.EnterSelectMode);
+            buttonTextMesh.text = "Polygon\nMode";
+        }
+        else
+        {
+            planeSelector.OnPlaneSelected.RemoveListener(boardPolygonSelector.EnterSelectMode);
+            planeSelector.OnPlaneSelected.AddListener(boardRectSelector.EnterSelectMode);
+            buttonTextMesh.text = "Rect\nMode";
+        }
     }
 
     private IEnumerator StartScene()
