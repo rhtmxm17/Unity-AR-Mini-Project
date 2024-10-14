@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 public class ARSceneManager : MonoBehaviour
@@ -10,10 +11,14 @@ public class ARSceneManager : MonoBehaviour
     [SerializeField] AROcclusionManager occlusionManager;
     [SerializeField] ARPlaneSelector planeSelector;
     [SerializeField] BoardRectSelector boardRectSelector;
-    [SerializeField] BoardManager boardManager;
+    [SerializeField] BoardModifyer boardModifyer;
+    [SerializeField] Button editButton;
 
     [SerializeField] UnitDatatable unitDatatable;
 
+    private ARBoard board = null;
+    private ARPlaneManager planeManager;
+    private ARTrackedImageManager trackedImageManager;
     public bool ActiveOcclusion
     {
         set
@@ -21,9 +26,6 @@ public class ARSceneManager : MonoBehaviour
             occlusionManager.enabled = value;
         }
     }
-
-    private ARPlaneManager planeManager;
-    private ARTrackedImageManager trackedImageManager;
 
     private void Start()
     {
@@ -33,9 +35,20 @@ public class ARSceneManager : MonoBehaviour
         // 감지된 평면중 하나를 선택 완료시 보드 영역 선택 진입
         planeSelector.OnPlaneSelected.AddListener(boardRectSelector.EnterSelectMode);
 
-        // 보드 영역 선택 완료시 보드 관리자에 등록 및 오클루전 컬링 종료
-        boardRectSelector.OnBoardCreated.AddListener(boardManager.SetBoard);
-        boardRectSelector.OnBoardCreated.AddListener(_ => { ActiveOcclusion = false; });
+        // 보드 영역 선택 완료시 처리
+        boardRectSelector.OnBoardCreated.AddListener(board => 
+        {
+            this.board = board;
+            ActiveOcclusion = false;
+            editButton.gameObject.SetActive(true);
+            editButton.onClick.AddListener(EnterModifyMode);
+
+            // 보드보다 먼저 확인된 이미지가 있다면 보드 등록
+            foreach (var image in trackedImageManager.trackables)
+            {
+                image.GetComponent<TrackedImageUnit>().SetBoard(board);
+            }
+        });
 
         unitDatatable.Initialize();
 
@@ -56,7 +69,30 @@ public class ARSceneManager : MonoBehaviour
         foreach (var image in args.added)
         {
             Debug.Log($"[ARSceneManager]이미지:{image.referenceImage.name} 감지됨");
-            image.GetComponent<TrackedImageUnit>().SetBoardManger(boardManager);
+            if (board != null)
+            {
+                image.GetComponent<TrackedImageUnit>().SetBoard(board);
+            }
         }
+    }
+
+    private void EnterModifyMode()
+    {
+        if (board == null)
+        {
+            Debug.LogWarning("보드가 준비되지 않은 상태에서 편집 모드로 진입 시도됨");
+            return;
+        }
+
+        boardModifyer.EnterModifyMode(board);
+        editButton.onClick.RemoveListener(EnterModifyMode);
+        editButton.onClick.AddListener(ExitModifyMode);
+    }
+
+    private void ExitModifyMode()
+    {
+        boardModifyer.ExitModifyMode();
+        editButton.onClick.RemoveListener(ExitModifyMode);
+        editButton.onClick.AddListener(EnterModifyMode);
     }
 }

@@ -11,9 +11,9 @@ public class BoardRectSelector : MonoBehaviour
 {
     [SerializeField] PlayerInput playerInput;
     [SerializeField] GameObject beaconPrefab; // 평면 위에 선택한 지점을 보여줄 프리펩
-    [SerializeField, Tooltip("원본 사이즈 10*10")] Collider boardPrefab; // 선택이 완료되었을 때 생성할 보드 프리펩
+    [SerializeField, Tooltip("원본 사이즈 10*10")] ARBoard boardPrefab; // 선택이 완료되었을 때 생성할 보드 프리펩
 
-    public UnityEvent<Collider> OnBoardCreated;
+    public UnityEvent<ARBoard> OnBoardCreated;
 
     private LineRenderer lineRenderer;
 
@@ -22,7 +22,7 @@ public class BoardRectSelector : MonoBehaviour
     private Phase phase;
     private InputAction clickAction;
     private InputAction pointAction;
-    private Collider boardInstance;
+    private ARBoard boardInstance;
     private readonly GameObject[] beacons = new GameObject[(int)Phase.COUNT]; // 선택한 지점을 표시할 비콘
     private readonly Action<InputAction.CallbackContext>[] updateBeacons = new Action<InputAction.CallbackContext>[(int)Phase.COUNT]; // 드래그하는 동안 실행할 메서드
     private Plane basePlane;
@@ -175,7 +175,7 @@ public class BoardRectSelector : MonoBehaviour
             foreach (GameObject beacon in beacons)
             {
                 // 평면 재설정 기능에 사용할 계획이 있으므로 삭제 대신 비활성화
-                beacon.gameObject.SetActive(false);
+                beacon.SetActive(false);
             }
 
             OnBoardCreated?.Invoke(boardInstance);

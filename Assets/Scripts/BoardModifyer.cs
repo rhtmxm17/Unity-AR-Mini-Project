@@ -23,7 +23,7 @@ public class BoardModifyer : MonoBehaviour
     private Beacons selectedPairIndex => pairBeaconMapping[(int)selectedBeaconIndex];
     private AxisModifyBeacon selectedBeacon => beacons[(int)selectedBeaconIndex];
 
-    private GameObject board;
+    private ARBoard board;
     private Plane horizontalPlane;
 
     private static readonly IList<Vector3> beaconPositions = new List<Vector3>
@@ -67,7 +67,7 @@ public class BoardModifyer : MonoBehaviour
         pointAction = playerInput.actions["Point"];
     }
 
-    public void EnterModifyMode(GameObject board)
+    public void EnterModifyMode(ARBoard board)
     {
         Debug.Log("편집 모드 진입");
         this.board = board;
@@ -85,6 +85,21 @@ public class BoardModifyer : MonoBehaviour
 
         // 수평 방향으로 드래그할 평면
         horizontalPlane = new Plane(board.transform.up, board.transform.position);
+    }
+
+    public void ExitModifyMode()
+    {
+        Debug.Log("편집 모드 해제");
+        this.board = null;
+
+        foreach (var beacon in beacons)
+        {
+            beacon.gameObject.SetActive(false);
+        }
+
+        clickAction.started -= TrySelectBeacon;
+        clickAction.canceled -= ReleaseBeacon;
+        ReleaseBeacon(); // 비콘이 선택된 채로 편집 모드를 나가는 경우의 처리
     }
 
     private void TrySelectBeacon(InputAction.CallbackContext context)
@@ -118,7 +133,9 @@ public class BoardModifyer : MonoBehaviour
         }
     }
 
-    private void ReleaseBeacon(InputAction.CallbackContext _)
+    private void ReleaseBeacon(InputAction.CallbackContext _) => ReleaseBeacon();
+
+    private void ReleaseBeacon()
     {
         // 선택된 비콘이 있다면
         if (selectedBeaconIndex == Beacons.UpDown)

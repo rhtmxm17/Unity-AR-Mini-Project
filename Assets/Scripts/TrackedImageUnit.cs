@@ -12,7 +12,7 @@ public class TrackedImageUnit : MonoBehaviour
     [SerializeField] UnitDatatable unitDatatable;
     [SerializeField] float AppearanceLerpCoefficient = 2f;
 
-    private BoardManager board;
+    private ARBoard board;
     private ARTrackedImage trackedImage;
     private GameObject unit;
     private Coroutine unitAppearanceRoutine;
@@ -35,7 +35,7 @@ public class TrackedImageUnit : MonoBehaviour
         StartCoroutine(UpdateOutlineColor());
     }
 
-    public void SetBoardManger(BoardManager board)
+    public void SetBoard(ARBoard board)
     {
         this.board = board;
         if (unitAppearanceRoutine == null)
