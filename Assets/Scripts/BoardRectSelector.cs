@@ -43,6 +43,12 @@ public class BoardRectSelector : MonoBehaviour
 
         clickAction = playerInput.actions["Click"];
         pointAction = playerInput.actions["Point"];
+
+        for (int i = 0; i < beacons.Length; i++)
+        {
+            beacons[i] = Instantiate(beaconPrefab);
+            beacons[i].SetActive(false);
+        }
     }
 
     public void EnterSelectMode(ARPlane targetPlane)
@@ -81,7 +87,8 @@ public class BoardRectSelector : MonoBehaviour
         {
             holdingBeacon = true;
 
-            beacons[(int)phase] = Instantiate(beaconPrefab, postion, Quaternion.identity);
+            beacons[(int)phase].SetActive(true);
+            beacons[(int)phase].transform.position = postion;
             beacons[(int)phase].transform.up = basePlane.normal; // 평면의 법선 방향이 위가 되도록 조정
 
             pointAction.performed += updateBeacons[(int)phase];
@@ -146,7 +153,7 @@ public class BoardRectSelector : MonoBehaviour
         if (! holdingBeacon)
             return;
 
-        Debug.Log($"PutBeacon Phase:{phase}");
+        Debug.Log($"ReleaseBeacon Phase:{phase}");
 
         holdingBeacon = false;
 

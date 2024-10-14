@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 public class BoardModifyer : MonoBehaviour
 {

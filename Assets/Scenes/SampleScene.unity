@@ -155,6 +155,7 @@ MonoBehaviour:
   occlusionManager: {fileID: 678064264}
   planeSelector: {fileID: 2052741727}
   boardRectSelector: {fileID: 2052741729}
+  boardPolygoSelector: {fileID: 2052741733}
   boardModifyer: {fileID: 2052741732}
   editButton: {fileID: 303226087}
   unitDatatable: {fileID: 11400000, guid: ea2df77366708af4684184f9c6ccd4d6, type: 2}
@@ -1090,6 +1091,7 @@ GameObject:
   - component: {fileID: 2052741728}
   - component: {fileID: 2052741727}
   - component: {fileID: 2052741729}
+  - component: {fileID: 2052741733}
   - component: {fileID: 2052741730}
   - component: {fileID: 2052741732}
   m_Layer: 0
@@ -1249,7 +1251,7 @@ LineRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_UseWorldSpace: 1
-  m_Loop: 1
+  m_Loop: 0
 --- !u!114 &2052741732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1266,3 +1268,21 @@ MonoBehaviour:
   axisXprefab: {fileID: 35981617406033027, guid: 7baffe2dcfece394f9926e41cb992b4c, type: 3}
   axisYprefab: {fileID: 1747964226820637564, guid: 54144f0ae68954548a888e959ee5378e, type: 3}
   axisZprefab: {fileID: 2576984508191694887, guid: 5706911b1e1cefc479374e7ec4ce0a35, type: 3}
+--- !u!114 &2052741733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052741726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcc1290c2621bf14395e144e1513d02c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInput: {fileID: 882121983}
+  beaconPrefab: {fileID: 2638711436524363939, guid: a28ffe0c98167674d9f64d83a6d8a641, type: 3}
+  boardPrefab: {fileID: 540941442678416766, guid: 66044f3593882ee4bb22f873b8ac6266, type: 3}
+  OnBoardCreated:
+    m_PersistentCalls:
+      m_Calls: []

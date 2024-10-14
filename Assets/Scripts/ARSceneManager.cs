@@ -11,6 +11,7 @@ public class ARSceneManager : MonoBehaviour
     [SerializeField] AROcclusionManager occlusionManager;
     [SerializeField] ARPlaneSelector planeSelector;
     [SerializeField] BoardRectSelector boardRectSelector;
+    [SerializeField] BoardPolygonSelector boardPolygoSelector;
     [SerializeField] BoardModifyer boardModifyer;
     [SerializeField] Button editButton;
 
@@ -32,23 +33,29 @@ public class ARSceneManager : MonoBehaviour
         planeManager = sessionOrigin.GetComponent<ARPlaneManager>();
         trackedImageManager = sessionOrigin.GetComponent<ARTrackedImageManager>();
 
-        // 감지된 평면중 하나를 선택 완료시 보드 영역 선택 진입
-        planeSelector.OnPlaneSelected.AddListener(boardRectSelector.EnterSelectMode);
+        // testcode
+        planeSelector.OnPlaneSelected.AddListener(boardPolygoSelector.EnterSelectMode);
 
-        // 보드 영역 선택 완료시 처리
-        boardRectSelector.OnBoardCreated.AddListener(board => 
+        if (false)
         {
-            this.board = board;
-            ActiveOcclusion = false;
-            editButton.gameObject.SetActive(true);
-            editButton.onClick.AddListener(EnterModifyMode);
+            // 감지된 평면중 하나를 선택 완료시 보드 영역 선택 진입
+            planeSelector.OnPlaneSelected.AddListener(boardRectSelector.EnterSelectMode);
 
-            // 보드보다 먼저 확인된 이미지가 있다면 보드 등록
-            foreach (var image in trackedImageManager.trackables)
+            // 보드 영역 선택 완료시 처리
+            boardRectSelector.OnBoardCreated.AddListener(board =>
             {
-                image.GetComponent<TrackedImageUnit>().SetBoard(board);
-            }
-        });
+                this.board = board;
+                ActiveOcclusion = false;
+                editButton.gameObject.SetActive(true);
+                editButton.onClick.AddListener(EnterModifyMode);
+
+                // 보드보다 먼저 확인된 이미지가 있다면 보드 등록
+                foreach (var image in trackedImageManager.trackables)
+                {
+                    image.GetComponent<TrackedImageUnit>().SetBoard(board);
+                }
+            });
+        }
 
         unitDatatable.Initialize();
 
