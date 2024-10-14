@@ -7,6 +7,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 35981617406033027, guid: 7baffe2dcfece394f9926e41cb992b4c, type: 3}
+      propertyPath: <Axis>k__BackingField.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 35981617406033027, guid: 7baffe2dcfece394f9926e41cb992b4c, type: 3}
+      propertyPath: <Axis>k__BackingField.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 347265077525083384, guid: 7baffe2dcfece394f9926e41cb992b4c, type: 3}
       propertyPath: m_RootOrder
       value: 0

@@ -53,7 +53,7 @@ public class BoardRectSelector : MonoBehaviour
 
         phase = Phase.First;
         clickAction.started += CreateBeacon;
-        clickAction.canceled += PutBeacon;
+        clickAction.canceled += ReleaseBeacon;
     }
 
     private bool TryGetCursorPoint(out Vector3 point)
@@ -67,7 +67,7 @@ public class BoardRectSelector : MonoBehaviour
         return result;
     }
 
-    private void CreateBeacon(InputAction.CallbackContext obj)
+    private void CreateBeacon(InputAction.CallbackContext _)
     {
         Debug.Log($"CreateBeacon Phase:{phase}");
 
@@ -92,7 +92,7 @@ public class BoardRectSelector : MonoBehaviour
         }
     }
 
-    private void UpdateBeacon_FirstPhase(InputAction.CallbackContext obj)
+    private void UpdateBeacon_FirstPhase(InputAction.CallbackContext _)
     {
         // 첫번째 비콘은 단순 배치
         if (TryGetCursorPoint(out Vector3 postion))
@@ -102,7 +102,7 @@ public class BoardRectSelector : MonoBehaviour
         }
     }
 
-    private void UpdateBeacon_SecondPhase(InputAction.CallbackContext obj)
+    private void UpdateBeacon_SecondPhase(InputAction.CallbackContext _)
     {
         // 두번째 비콘은 두 비콘이 마주보듯이 회전
         // 아래와 같은 형태가 되도록(+: 비콘)
@@ -122,7 +122,7 @@ public class BoardRectSelector : MonoBehaviour
         }
     }
 
-    private void UpdateBeacon_LastPhase(InputAction.CallbackContext obj)
+    private void UpdateBeacon_LastPhase(InputAction.CallbackContext _)
     {
         if (TryGetCursorPoint(out Vector3 postion))
         {
@@ -140,7 +140,7 @@ public class BoardRectSelector : MonoBehaviour
         }
     }
 
-    private void PutBeacon(InputAction.CallbackContext obj)
+    private void ReleaseBeacon(InputAction.CallbackContext _)
     {
         // 클릭을 한 채로 진입할 경우를 위한 예외처리
         if (! holdingBeacon)
@@ -158,7 +158,7 @@ public class BoardRectSelector : MonoBehaviour
         {
             lineRenderer.enabled = false;
             clickAction.started -= CreateBeacon;
-            clickAction.canceled -= PutBeacon;
+            clickAction.canceled -= ReleaseBeacon;
 
             // 보드 사이즈 계산
             Vector3[] vertexes = new Vector3[4];
